@@ -30,7 +30,8 @@ class MainActivity : AppCompatActivity() {
         jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi::class.java)
 
         //getPosts()
-        getComments()
+        //getComments()
+        createPost()
     }
 
     private fun getPosts(){
@@ -92,6 +93,34 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<MutableList<Comment>>, t: Throwable) {
+                Toast.makeText(this@MainActivity, "Error: ${t.toString()}", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    private fun createPost() {
+        val post = Post(20, "New title", "New text")
+
+        val call = jsonPlaceHolderApi.createPost(post)
+
+        call.enqueue(object: Callback<Post>{
+            override fun onResponse(call: Call<Post>, response: Response<Post>) {
+                if (response.isSuccessful) {
+                    var content = ""
+                    content += "Code: ${response.code()}\n"
+                    content += "ID: ${post.id}\n"
+                    content += "User ID: ${post.userId}\n"
+                    content += "Title: ${post.title}\n"
+                    content += "Text: ${post.text}\n\n"
+
+                    textViewResult.append(content)
+
+                } else {
+                    textViewResult.text = response.code().toString()
+                }
+            }
+
+            override fun onFailure(call: Call<Post>, t: Throwable) {
                 Toast.makeText(this@MainActivity, "Error: ${t.toString()}", Toast.LENGTH_SHORT).show()
             }
         })

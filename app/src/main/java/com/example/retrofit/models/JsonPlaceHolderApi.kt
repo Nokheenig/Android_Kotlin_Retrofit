@@ -1,7 +1,9 @@
 package com.example.retrofit.models
 
 import retrofit2.Call
+import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 import retrofit2.http.QueryMap
@@ -26,4 +28,7 @@ interface JsonPlaceHolderApi {
 
     @GET
     fun getComments(@Url url: String) : Call<MutableList<Comment>>
+
+    @POST("posts")
+    fun createPost(@Body post: Post): Call<Post>
 }
