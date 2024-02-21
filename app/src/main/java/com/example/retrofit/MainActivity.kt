@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.TextView
 import android.widget.Toast
+import com.example.retrofit.models.Comment
 import com.example.retrofit.models.JsonPlaceHolderApi
 import com.example.retrofit.models.Post
 import retrofit2.Call
@@ -14,6 +15,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class MainActivity : AppCompatActivity() {
     private lateinit var textViewResult: TextView
+    private lateinit var jsonPlaceHolderApi: JsonPlaceHolderApi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -25,9 +27,14 @@ class MainActivity : AppCompatActivity() {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
-        val jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi::class.java)
+        jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi::class.java)
 
-        val call = jsonPlaceHolderApi.getPosts()
+        getPosts()
+        //getComments()
+    }
+
+    private fun getPosts(){
+        val call = jsonPlaceHolderApi.getPosts("id", "desc", 6,3,1,9) // for example
         call.enqueue(object : Callback<MutableList<Post>> {
             override fun onResponse(
                 call: Call<MutableList<Post>>,
@@ -50,6 +57,37 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<MutableList<Post>>, t: Throwable) {
+                Toast.makeText(this@MainActivity, "Error: ${t.toString()}", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    private fun getComments() {
+        val call = jsonPlaceHolderApi.getComments(4) // 4 for instance
+
+        call.enqueue(object: Callback<MutableList<Comment>>{
+            override fun onResponse(
+                call: Call<MutableList<Comment>>,
+                response: Response<MutableList<Comment>>
+            ) {
+                if (response.isSuccessful) {
+                    val comments = response.body()
+
+                    for (comment in comments!!) {
+                        var content = ""
+
+                        content += "ID: ${comment.id}\n"
+                        content += "Post ID: ${comment.postId}\n"
+                        content += "Name: ${comment.name}\n"
+                        content += "Email: ${comment.email}\n"
+                        content += "Text: ${comment.text}\n\n"
+
+                        textViewResult.append(content)
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<MutableList<Comment>>, t: Throwable) {
                 Toast.makeText(this@MainActivity, "Error: ${t.toString()}", Toast.LENGTH_SHORT).show()
             }
         })
