@@ -29,12 +29,16 @@ class MainActivity : AppCompatActivity() {
 
         jsonPlaceHolderApi = retrofit.create(JsonPlaceHolderApi::class.java)
 
-        getPosts()
-        //getComments()
+        //getPosts()
+        getComments()
     }
 
     private fun getPosts(){
-        val call = jsonPlaceHolderApi.getPosts("id", "desc", 6,3,1,9) // for example
+        val parameters = mutableMapOf<String,String>()
+        parameters["userId"] = "1"
+        parameters["_sort"] = "id"
+        parameters["_order"] = "desc"
+        val call = jsonPlaceHolderApi.getPosts(parameters)
         call.enqueue(object : Callback<MutableList<Post>> {
             override fun onResponse(
                 call: Call<MutableList<Post>>,
@@ -63,7 +67,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getComments() {
-        val call = jsonPlaceHolderApi.getComments(4) // 4 for instance
+        val call = jsonPlaceHolderApi.getComments("posts/2/comments") // for instance
 
         call.enqueue(object: Callback<MutableList<Comment>>{
             override fun onResponse(
