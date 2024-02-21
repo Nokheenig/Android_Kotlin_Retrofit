@@ -101,17 +101,23 @@ class MainActivity : AppCompatActivity() {
     private fun createPost() {
         val post = Post(20, "New title", "New text")
 
-        val call = jsonPlaceHolderApi.createPost(post)
+        val fields = mutableMapOf<String,String>()
+        fields.put("userId", "66")
+        fields.put("title", "This is a new title")
+        fields.put("body", "This is a new text")
+
+        val call = jsonPlaceHolderApi.createPost(fields)
 
         call.enqueue(object: Callback<Post>{
             override fun onResponse(call: Call<Post>, response: Response<Post>) {
                 if (response.isSuccessful) {
+                    val postResponse = response.body()
                     var content = ""
                     content += "Code: ${response.code()}\n"
-                    content += "ID: ${post.id}\n"
-                    content += "User ID: ${post.userId}\n"
-                    content += "Title: ${post.title}\n"
-                    content += "Text: ${post.text}\n\n"
+                    content += "ID: ${postResponse?.id}\n"
+                    content += "User ID: ${postResponse?.userId}\n"
+                    content += "Title: ${postResponse?.title}\n"
+                    content += "Text: ${postResponse?.text}\n\n"
 
                     textViewResult.append(content)
 

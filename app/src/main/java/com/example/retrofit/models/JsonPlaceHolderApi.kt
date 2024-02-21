@@ -2,6 +2,9 @@ package com.example.retrofit.models
 
 import retrofit2.Call
 import retrofit2.http.Body
+import retrofit2.http.Field
+import retrofit2.http.FieldMap
+import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
@@ -31,4 +34,16 @@ interface JsonPlaceHolderApi {
 
     @POST("posts")
     fun createPost(@Body post: Post): Call<Post>
+
+    @FormUrlEncoded
+    @POST("posts")
+    fun createPost(
+        @Field("userId") userId: Int,
+        @Field("title") title: String,
+        @Field("body") text: String,
+    ) : Call<Post>
+
+    @FormUrlEncoded
+    @POST("posts")
+    fun createPost(@FieldMap fields: MutableMap<String, String>): Call<Post>
 }
